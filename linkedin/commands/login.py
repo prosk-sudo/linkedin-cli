@@ -23,7 +23,7 @@ class LoginRequestHandler(http.server.BaseHTTPRequestHandler):
             self.send_response(307)
             self.send_header('Location','https://linkedin-cli.tigillo.com/error?error=' + query_value + '&description='+description)
         elif query_key == "code":
-            logger.debug("Authorization code received: " + query_value)
+            logger.debug("Authorization code received: %s", query_value)
             # Exchange the code for an Access Token
             token_url = "https://www.linkedin.com/oauth/v2/accessToken"
             token_data = {

@@ -2,6 +2,7 @@ bin
 build
 dist
 venv
+posts
 *.egg-info
 *.pyc
 .DS_Store

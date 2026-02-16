@@ -28,7 +28,7 @@ class getConfig:
                     + "&scope=openid%20profile%20email%20w_member_social")
                 self.REDIRECT_URL="http://localhost:" + str(self.CONFIG['port'])
         except FileNotFoundError:
-            logger.error("Config file not found: '" + self.CONFIG_FILE + "'")
+            logger.error("Config file not found: '%s'", self.CONFIG_FILE)
 
     def setApplication(self, client_id, client_secret):
         self.CONFIG['application']['client_id'] = client_id

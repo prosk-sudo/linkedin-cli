@@ -42,7 +42,7 @@ Other commands
 Run below command and provide your client id and secret of your linkedin application. Configuration will be saved to `~/.linkedin/config.json` file.
 
 ```bash
-linkedin configure set application
+linkedin config set application
 ```
 
 #### Linkedin Application Configuration

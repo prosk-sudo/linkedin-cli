@@ -17,6 +17,9 @@ class CLI:
             {"name": "config.set.application", "pattern": r'^config set application$', "module":"linkedin.commands.config", "klass": "SetApplicationConfigCommand"},
             {"name": "me", "pattern": r'^me$', "module":"linkedin.commands.me", "klass": "MeCommand"},
             {"name": "post.help", "pattern": r'^post help$', "module":"linkedin.commands.post", "klass": "HelpCommand"},
+            {"name": "post.list", "pattern": r'^post list$', "module":"linkedin.commands.post", "klass": "PostListCommand"},
+            {"name": "post.delete", "pattern": r'^post delete\s+', "module":"linkedin.commands.post", "klass": "PostDeleteCommand"},
+            {"name": "attachment.list", "pattern": r'^attachment list$', "module":"linkedin.commands.post", "klass": "AttachmentListCommand"},
             {"name": "post.public", "pattern": r'^post\s*(-v|--visibility)(\s*|=)public', "module":"linkedin.commands.post", "klass": "PostPublicCommand"},
             {"name": "post.connections", "pattern": r'^post\s*(-v|--visibility)(\s*|=)connections', "module":"linkedin.commands.post", "klass": "PostConnectionsCommand"},
             {"name": "post", "pattern": r'^post', "module":"linkedin.commands.post", "klass": "PostPublicCommand"},
@@ -24,7 +27,7 @@ class CLI:
 
     def execute(self, args):
         command_str = ' '.join(args)
-        logger.debug("Command string: " + command_str)
+        logger.debug("Command string: %s", command_str)
         for command in self.commands:
             p = re.compile(command["pattern"])
             if p.match(command_str):

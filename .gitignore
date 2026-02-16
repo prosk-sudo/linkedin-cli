@@ -1,7 +1,9 @@
 bin
 build
 dist
+venv
 *.egg-info
 *.pyc
 .DS_Store
 MANIFEST
+__pycache__

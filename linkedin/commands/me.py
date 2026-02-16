@@ -15,12 +15,11 @@ class HelpCommand(command.BaseCommand):
 
 class MeCommand(command.BaseCommand):
     def execute(self, args):
-        url = "https://api.linkedin.com/v2/me"
+        url = "https://api.linkedin.com/v2/userinfo"
         req = request.Request(url, headers={'Authorization': 'Bearer ' + config.getConfig().CONFIG['access_token']})
         response = request.urlopen(req)
         user = json.loads(response.read())
-        print("ID: " + user["id"],)
-        print("First Name: " + user['localizedFirstName'])
-        print("Last Name: " + user['localizedLastName'])
 
-
+        print("ID: " + user["sub"])
+        print("First Name: " + user["given_name"])
+        print("Last Name: " + user["family_name"])

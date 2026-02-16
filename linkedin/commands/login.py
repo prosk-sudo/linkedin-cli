@@ -10,6 +10,7 @@ from urllib import request, parse
 
 logger = logging.getLogger(__name__)
 
+
 class LoginRequestHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         parsed_path = parse.urlparse(self.path)
@@ -20,25 +21,40 @@ class LoginRequestHandler(http.server.BaseHTTPRequestHandler):
             description = parsed_query[1][1]
             logger.error(description)
             self.send_response(307)
-            self.send_header('Location','https://linkedin-cli.tigillo.com/error?error=' + query_value + '&description='+description)   
+            self.send_header('Location','https://linkedin-cli.tigillo.com/error?error=' + query_value + '&description='+description)
         elif query_key == "code":
-            logger.debug("Authorization allowed")
-            logger.debug("Authorization code:" + query_value)
-            url = "https://www.linkedin.com/oauth/v2/accessToken"
-            data = {'grant_type': 'authorization_code', 'code': query_value, 'redirect_uri': config.getConfig().REDIRECT_URL, 'client_id': config.getConfig().CONFIG['application']['client_id'], 'client_secret': config.getConfig().CONFIG['application']['client_secret']}
-            data = parse.urlencode(data).encode()
-            req = request.Request(url, data=data)
-            response = request.urlopen(req)
-            access_token = json.loads(response.read())['access_token']
+            logger.debug("Authorization code received: " + query_value)
+            # Exchange the code for an Access Token
+            token_url = "https://www.linkedin.com/oauth/v2/accessToken"
+            token_data = {
+                'grant_type': 'authorization_code',
+                'code': query_value,
+                'redirect_uri': config.getConfig().REDIRECT_URL,
+                'client_id': config.getConfig().CONFIG['application']['client_id'],
+                'client_secret': config.getConfig().CONFIG['application']['client_secret']
+            }
+            token_data = parse.urlencode(token_data).encode()
+            token_req = request.Request(token_url, data=token_data)
+            # LinkedIn requires x-www-form-urlencoded
+            token_req.add_header('Content-Type', 'application/x-www-form-urlencoded')
+            token_response = request.urlopen(token_req)
+            access_token = json.loads(token_response.read())['access_token']
             config.getConfig().setAccessToken(access_token)
-                
-            url = "https://api.linkedin.com/v2/me"
-            req = request.Request(url, headers={'Authorization': 'Bearer ' + config.getConfig().CONFIG['access_token']})
-            response = request.urlopen(req)
-            user = json.loads(response.read())
-            config.getConfig().setUrn(user["id"])
+
+            # Retrieve the user details
+            userinfo_url = "https://api.linkedin.com/v2/userinfo"
+            userinfo_req = request.Request(userinfo_url, headers={
+                'Authorization': 'Bearer ' + access_token
+            })
+
+            userinfo_response = request.urlopen(userinfo_req)
+            user = json.loads(userinfo_response.read())
+
+            config.getConfig().setUrn(user["sub"])
+
             self.send_response(307)
             self.send_header('Location','https://linkedin-cli.tigillo.com/success')
+
         else:
             description = "Unsupported response from linkedin"
             logger.error(description)

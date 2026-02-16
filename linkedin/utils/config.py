@@ -25,7 +25,7 @@ class getConfig:
                     + self.CONFIG['application']['client_id']
                     + "&redirect_uri=http%3A%2F%2Flocalhost%3A"
                     + str(self.CONFIG['port'])
-                    + "&scope=r_liteprofile%20r_emailaddress%20w_member_social")
+                    + "&scope=openid%20profile%20email%20w_member_social")
                 self.REDIRECT_URL="http://localhost:" + str(self.CONFIG['port'])
         except FileNotFoundError:
             logger.error("Config file not found: '" + self.CONFIG_FILE + "'")
